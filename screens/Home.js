@@ -3,52 +3,56 @@ import { render } from 'react-dom';
 import { StyleSheet, Text, View, Image, FlatList } from 'react-native';
 import { Card, FAB } from 'react-native-paper';
 
-const Home = () => {
+const Home = ({ navigation }) => {
   const data = [
     {
-      id: 1,
+      id: '1',
       name: 'karen',
       position: 'web developer'
     },
     {
-      id: 2,
+      id: '2',
       name: 'eduardo',
       position: 'android developer'
     },
     {
-      id: 3,
+      id: '3',
       name: 'edgar',
       position: 'react developer'
     },
-    {
-      id: 4,
-      name: 'enzo',
-      position: 'ios developer'
-    },
-    {
-      id: 5,
-      name: 'ariel',
-      position: 'web developer'
-    },
-    {
-      id: 6,
-      name: 'eduardo',
-      position: 'android developer'
-    },
-    {
-      id: 7,
-      name: 'edgar',
-      position: 'react developer'
-    },
-    {
-      id: 8,
-      name: 'enzo',
-      position: 'ios developer'
-    },
+    // {
+    //   id: '4',
+    //   name: 'enzo',
+    //   position: 'ios developer'
+    // },
+    // {
+    //   id: '5',
+    //   name: 'ariel',
+    //   position: 'web developer'
+    // },
+    // {
+    //   id: '6',
+    //   name: 'eduardo',
+    //   position: 'android developer'
+    // },
+    // {
+    //   id: '7',
+    //   name: 'edgar',
+    //   position: 'react developer'
+    // },
+    // {
+    //   id: '8',
+    //   name: 'enzo',
+    //   position: 'ios developer'
+    // },
   ];
 
   const renderList = ({ item }) => (
-    <Card key={item.id.toString()} style={styles.mycard}>
+    <Card
+      key={item.id.toString()}
+      style={styles.mycard}
+      onPress={() => navigation.navigate('Profile')}
+    >
       <View style={styles.cardView}>
         <Image
           style={{
@@ -71,7 +75,7 @@ const Home = () => {
   );
 
   return (
-    <View>
+    <View style={styles.root}>
       <FlatList
         data={data}
         renderItem={renderList}
@@ -79,7 +83,7 @@ const Home = () => {
       <FAB
         style={styles.fab}
         icon="plus"
-        onPress={() => console.log('Pressed')}
+        onPress={() => navigation.navigate('Create')}
         theme={{
           colors: {
             accent: '#006aff',
@@ -91,6 +95,9 @@ const Home = () => {
 };
 
 const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+  },
   mycard: {
     margin: 5,
   },

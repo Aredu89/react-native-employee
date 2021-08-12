@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, Image, FlatList, Modal } from 'react-native';
-import Constants from 'expo-constants';
 
 import { TextInput, Button } from 'react-native-paper';
 
@@ -123,7 +122,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modal: {
-    marginTop: Constants.statusBarHeight,
     position: 'absolute',
     bottom: 2,
     width: '100%',
