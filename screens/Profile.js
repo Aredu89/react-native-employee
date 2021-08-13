@@ -3,12 +3,21 @@ import { StyleSheet, Text, View, Image, Linking, Platform } from 'react-native';
 import { MaterialIcons, Entypo } from '@expo/vector-icons';
 import { Title, Card, Button } from 'react-native-paper';
 
-const Profile = () => {
+const Profile = ({ route }) => {
+  const {
+    id,
+    name,
+    picture,
+    email,
+    phone,
+    salary,
+    position
+  } = route.params.item;
   const openDial = () => {
     if (Platform.OS === 'android') {
-      Linking.openURL('tel:3513511111');
+      Linking.openURL(`tel:${phone}`);
     } else {
-      Linking.openURL('telprompt:3513511111')
+      Linking.openURL(`telprompt:${phone}`);
     }
   };
   return(
@@ -22,32 +31,32 @@ const Profile = () => {
             borderRadius: 140/2,
           }}
           source={{
-            uri: 'https://images.unsplash.com/photo-1542909168-82c3e7fdca5c?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80'
+            uri: picture
           }}
         />
       </View>
       <View style={styles.infoContainer}>
-        <Title style={{ fontSize: 25 }}>Ariel Rosales</Title>
-        <Text style={styles.subTitle}>Developer</Text>
+        <Title style={{ fontSize: 25 }}>{ name }</Title>
+        <Text style={styles.subTitle}>{ position }</Text>
       </View>
       <Card style={styles.card} onPress={() => {
-        Linking.openURL('mailto:aarr@hotmail.com')
+        Linking.openURL(`mailto:${email}`)
       }}>
         <View style={styles.cardSection}>
           <MaterialIcons name='email' size={30} color='#006aff' />
-          <Text style={styles.infoText}>aarr@hotmail.com</Text>
+          <Text style={styles.infoText}>{ email }</Text>
         </View>
       </Card>
       <Card style={styles.card} onPress={() => openDial()}>
         <View style={styles.cardSection}>
           <Entypo name='old-phone' size={30} color='#006aff' />
-          <Text style={styles.infoText}>351 351 3311</Text>
+          <Text style={styles.infoText}>{ phone }</Text>
         </View>
       </Card>
       <Card style={styles.card}>
         <View style={styles.cardSection}>
           <MaterialIcons name='attach-money' size={30} color='#006aff' />
-          <Text style={styles.infoText}>5.000</Text>
+          <Text style={styles.infoText}>{ salary }</Text>
         </View>
       </Card>
       <View style={styles.buttonsContainer}>

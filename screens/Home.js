@@ -3,55 +3,71 @@ import { render } from 'react-dom';
 import { StyleSheet, Text, View, Image, FlatList } from 'react-native';
 import { Card, FAB } from 'react-native-paper';
 
+const profilePicture = 'https://images.unsplash.com/photo-1542909168-82c3e7fdca5c?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80';
+
 const Home = ({ navigation }) => {
   const data = [
     {
       id: '1',
       name: 'karen',
-      position: 'web developer'
+      position: 'web developer',
+      email: 'karen@hotmail.com',
+      salary: '$5.000',
+      picture: profilePicture,
+      phone: '3511234455',
     },
     {
       id: '2',
       name: 'eduardo',
-      position: 'android developer'
+      position: 'android developer',
+      email: 'eduardo@hotmail.com',
+      salary: '$5.000',
+      picture: profilePicture,
+      phone: '3511234455',
     },
     {
       id: '3',
       name: 'edgar',
-      position: 'react developer'
+      position: 'react developer',
+      email: 'edgar@hotmail.com',
+      salary: '$5.000',
+      picture: profilePicture,
+      phone: '3511234455',
     },
     // {
     //   id: '4',
     //   name: 'enzo',
-    //   position: 'ios developer'
+    //   position: 'ios developer',
+    //   email: 'edgar@hotmail.com',
+    //   salary: '$5.000',
+    //   picture: profilePicture,
+    //   phone: '3511234455',
     // },
     // {
     //   id: '5',
     //   name: 'ariel',
-    //   position: 'web developer'
+    //   position: 'web developer',
+    //   email: 'edgar@hotmail.com',
+    //   salary: '$5.000',
+    //   picture: profilePicture,
+    //   phone: '3511234455',
     // },
     // {
     //   id: '6',
     //   name: 'eduardo',
-    //   position: 'android developer'
-    // },
-    // {
-    //   id: '7',
-    //   name: 'edgar',
-    //   position: 'react developer'
-    // },
-    // {
-    //   id: '8',
-    //   name: 'enzo',
-    //   position: 'ios developer'
+    //   position: 'android developer',
+    //   email: 'edgar@hotmail.com',
+    //   salary: '$5.000',
+    //   picture: profilePicture,
+    //   phone: '3511234455',
     // },
   ];
 
   const renderList = ({ item }) => (
     <Card
-      key={item.id.toString()}
+      key={item.id}
       style={styles.mycard}
-      onPress={() => navigation.navigate('Profile')}
+      onPress={() => navigation.navigate('Profile', { item })}
     >
       <View style={styles.cardView}>
         <Image

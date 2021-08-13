@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, Image, FlatList, Modal } from 'react-native';
+import { StyleSheet, Text, View, Image, Alert, Modal } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
 
 import { TextInput, Button } from 'react-native-paper';
 
@@ -10,6 +11,34 @@ const CreateEmployee = () => {
   const [ salary, setSalary ] = useState('');
   const [ picture, setPicture ] = useState('');
   const [ modal, setModal ] = useState(false);
+
+  const pickFromGallery = async () => {
+    const { granted } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!granted) {
+      Alert.alert('Sorry, we need camera roll permissions to make this work!');
+    }
+    const data = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [ 1, 1 ],
+      quality: 0.5,
+    })
+    console.log("data: ", data);
+  };
+
+  const pickFromCamera = async () => {
+    const { granted } = await ImagePicker.requestCameraPermissionsAsync();
+    if (!granted) {
+      Alert.alert('Sorry, we need camera roll permissions to make this work!');
+    }
+    const data = await ImagePicker.launchCameraAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [ 1, 1 ],
+      quality: 0.5,
+    })
+    console.log("data: ", data);
+  };
   
   return (
     <View style={styles.root}>
@@ -76,7 +105,7 @@ const CreateEmployee = () => {
             <Button
               icon='camera'
               mode="contained"
-              onPress={() => setModal(false)}
+              onPress={() => pickFromCamera()}
               theme={theme}
             >
               Camera
@@ -84,7 +113,7 @@ const CreateEmployee = () => {
             <Button
               icon='image-area'
               mode="contained"
-              onPress={() => setModal(false)}
+              onPress={() => pickFromGallery()}
               theme={theme}
             >
               Gallery
