@@ -23,7 +23,13 @@ const CreateEmployee = () => {
       aspect: [ 1, 1 ],
       quality: 0.5,
     })
-    console.log("data: ", data);
+    if(!data.cancelled){
+      cloudUpload({
+        uri: data.uri,
+        type: `test/${data.uri.split('.')[1]}`,
+        name: `test.${data.uri.split('.')[1]}`,
+      });
+    };
   };
 
   const pickFromCamera = async () => {
@@ -37,7 +43,29 @@ const CreateEmployee = () => {
       aspect: [ 1, 1 ],
       quality: 0.5,
     })
-    console.log("data: ", data);
+    if(!data.cancelled){
+      cloudUpload({
+        uri: data.uri,
+        type: `test/${data.uri.split('.')[1]}`,
+        name: `test.${data.uri.split('.')[1]}`,
+      });
+    };
+  };
+
+  const cloudUpload = (image) => {
+    const data = new FormData();
+    data.append('file', image);
+    data.append('upload_preset', 'employee-app-r-native');
+    data.append('cloud_name', 'ariel-react-native');
+
+    fetch('https://api.cloudinary.com/v1_1/ariel-react-native/image/upload', {
+      method: 'POST',
+      body: data,
+    }).then(res=>res.json())
+      .then(data=>{
+        setPicture(data.url);
+        setModal(false);
+      })
   };
   
   return (
@@ -77,7 +105,7 @@ const CreateEmployee = () => {
         value={salary}
       />
       <Button
-        icon="upload"
+        icon={ picture ? 'check' : 'upload'}
         mode="contained"
         onPress={() => setModal(true)}
         style={styles.button}
