@@ -6,9 +6,7 @@ router.get('/', (req, res) => {
   res.send('Welcome to node');
 });
 
-router.get('/employees', (req, res) => {
-  console.log("Get employees")
-});
+router.get('/employees', employee.getAllEmployees);
 router.post('/employees', employee.createEmployee);
 router.delete('/employees', employee.deleteEmployee);
 router.put('/employees', employee.updateEmployee);
