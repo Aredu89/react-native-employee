@@ -3,14 +3,43 @@ import { StyleSheet, Text, View, Image, Alert, Modal } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 
 import { TextInput, Button } from 'react-native-paper';
+import { uri } from './Consts';
 
-const CreateEmployee = () => {
+const CreateEmployee = ({
+  navigation
+}) => {
   const [ name, setName ] = useState('');
   const [ phone, setPhone ] = useState('');
   const [ email, setEmail ] = useState('');
   const [ salary, setSalary ] = useState('');
   const [ picture, setPicture ] = useState('');
+  const [ position, setPosition ] = useState('');
   const [ modal, setModal ] = useState(false);
+
+  const submitData = () => {
+    fetch(`${uri}/employees`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        name,
+        email,
+        phone,
+        picture,
+        salary,
+        position,
+      }),
+    })
+    .then(res=>res.json())
+    .then(data=>{
+      Alert.alert(`Employee ${data.name} created`);
+      navigation.navigate('Home');
+    })
+    .catch(error=>{
+      Alert.alert('Error creating employee')
+    })
+  };
 
   const pickFromGallery = async () => {
     const { granted } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -61,11 +90,15 @@ const CreateEmployee = () => {
     fetch('https://api.cloudinary.com/v1_1/ariel-react-native/image/upload', {
       method: 'POST',
       body: data,
-    }).then(res=>res.json())
-      .then(data=>{
-        setPicture(data.url);
-        setModal(false);
-      })
+    })
+    .then(res=>res.json())
+    .then(data=>{
+      setPicture(data.url);
+      setModal(false);
+    })
+    .catch(error=>{
+      Alert.alert('Error uploading image')
+    })
   };
   
   return (
@@ -104,6 +137,14 @@ const CreateEmployee = () => {
         theme={theme}
         value={salary}
       />
+      <TextInput
+        label="Position"
+        mode='outlined'
+        onChangeText={text => setPosition(text)}
+        style={styles.input}
+        theme={theme}
+        value={position}
+      />
       <Button
         icon={ picture ? 'check' : 'upload'}
         mode="contained"
@@ -116,7 +157,7 @@ const CreateEmployee = () => {
       <Button
         icon="content-save"
         mode="contained"
-        onPress={() => console.log("Save---")}
+        onPress={() => submitData()}
         style={styles.button}
         theme={theme}
       >

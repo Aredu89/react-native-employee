@@ -5,7 +5,7 @@ import { Title, Card, Button } from 'react-native-paper';
 
 const Profile = ({ route }) => {
   const {
-    id,
+    _id,
     name,
     picture,
     email,

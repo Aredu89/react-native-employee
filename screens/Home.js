@@ -1,71 +1,32 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { render } from 'react-dom';
-import { StyleSheet, Text, View, Image, FlatList } from 'react-native';
+import { StyleSheet, Text, View, Image, FlatList, Alert } from 'react-native';
 import { Card, FAB } from 'react-native-paper';
-
-const profilePicture = 'https://images.unsplash.com/photo-1542909168-82c3e7fdca5c?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80';
+import { uri } from './Consts';
 
 const Home = ({ navigation }) => {
-  const data = [
-    {
-      id: '1',
-      name: 'karen',
-      position: 'web developer',
-      email: 'karen@hotmail.com',
-      salary: '$5.000',
-      picture: profilePicture,
-      phone: '3511234455',
-    },
-    {
-      id: '2',
-      name: 'eduardo',
-      position: 'android developer',
-      email: 'eduardo@hotmail.com',
-      salary: '$5.000',
-      picture: profilePicture,
-      phone: '3511234455',
-    },
-    {
-      id: '3',
-      name: 'edgar',
-      position: 'react developer',
-      email: 'edgar@hotmail.com',
-      salary: '$5.000',
-      picture: profilePicture,
-      phone: '3511234455',
-    },
-    // {
-    //   id: '4',
-    //   name: 'enzo',
-    //   position: 'ios developer',
-    //   email: 'edgar@hotmail.com',
-    //   salary: '$5.000',
-    //   picture: profilePicture,
-    //   phone: '3511234455',
-    // },
-    // {
-    //   id: '5',
-    //   name: 'ariel',
-    //   position: 'web developer',
-    //   email: 'edgar@hotmail.com',
-    //   salary: '$5.000',
-    //   picture: profilePicture,
-    //   phone: '3511234455',
-    // },
-    // {
-    //   id: '6',
-    //   name: 'eduardo',
-    //   position: 'android developer',
-    //   email: 'edgar@hotmail.com',
-    //   salary: '$5.000',
-    //   picture: profilePicture,
-    //   phone: '3511234455',
-    // },
-  ];
+  const [ data, setData ] = useState([]);
+  const [ loading, setLoading ] = useState(true);
+
+  const fetchData = () => {
+    fetch(`${uri}/employees`)
+    .then(res=>res.json())
+    .then(results=>{
+      setData(results);
+      setLoading(false)
+    })
+    .catch(error=>{
+      Alert.alert('Error getting employees')
+    })
+  }
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const renderList = ({ item }) => (
     <Card
-      key={item.id}
+      key={item._id}
       style={styles.mycard}
       onPress={() => navigation.navigate('Profile', { item })}
     >
@@ -77,7 +38,7 @@ const Home = ({ navigation }) => {
             borderRadius: 60/2, 
           }}
           source={{
-            uri: 'https://images.unsplash.com/photo-1610216705422-caa3fcb6d158?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80'
+            uri: item.picture
           }}
         />
         <View style={{
@@ -95,6 +56,9 @@ const Home = ({ navigation }) => {
       <FlatList
         data={data}
         renderItem={renderList}
+        keyExtractor={item => item._id}
+        refreshing={loading}
+        onRefresh={() => fetchData()}
       />
       <FAB
         style={styles.fab}
