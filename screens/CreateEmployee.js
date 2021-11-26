@@ -1,22 +1,32 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, Image, Alert, Modal } from 'react-native';
+import { StyleSheet, View, Alert, Modal, KeyboardAvoidingView } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 
 import { TextInput, Button } from 'react-native-paper';
 import { uri } from './Consts';
 
 const CreateEmployee = ({
-  navigation
+  navigation,
+  route
 }) => {
-  const [ name, setName ] = useState('');
-  const [ phone, setPhone ] = useState('');
-  const [ email, setEmail ] = useState('');
-  const [ salary, setSalary ] = useState('');
-  const [ picture, setPicture ] = useState('');
-  const [ position, setPosition ] = useState('');
-  const [ modal, setModal ] = useState(false);
 
-  const submitData = () => {
+  const getDetails = (attribute) => {
+    if(route.params) {
+      return route.params[attribute]
+    };
+    return ''
+  };
+
+  const [ name, setName ] = useState(getDetails('name'));
+  const [ phone, setPhone ] = useState(getDetails('phone'));
+  const [ email, setEmail ] = useState(getDetails('email'));
+  const [ salary, setSalary ] = useState(getDetails('salary'));
+  const [ picture, setPicture ] = useState(getDetails('picture'));
+  const [ position, setPosition ] = useState(getDetails('position'));
+  const [ modal, setModal ] = useState(false);
+  const [ enableShift, setEnableShift ] = useState(false);
+
+  const saveData = () => {
     fetch(`${uri}/employees`, {
       method: 'POST',
       headers: {
@@ -39,6 +49,40 @@ const CreateEmployee = ({
     .catch(error=>{
       Alert.alert('Error creating employee')
     })
+  };
+
+  const updateData = () => {
+    fetch(`${uri}/employees`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        id: route.params._id,
+        name,
+        email,
+        phone,
+        picture,
+        salary,
+        position,
+      }),
+    })
+    .then(res=>res.json())
+    .then(data=>{
+      Alert.alert(`Employee ${data.name} updated`);
+      navigation.navigate('Home');
+    })
+    .catch(error=>{
+      Alert.alert('Error updating employee')
+    })
+  }
+
+  const submitData = () => {
+    if(route.params?._id) {
+      updateData();
+    } else {
+      saveData();
+    };
   };
 
   const pickFromGallery = async () => {
@@ -102,102 +146,113 @@ const CreateEmployee = ({
   };
   
   return (
-    <View style={styles.root}>
-      <TextInput
-        label="Name"
-        mode='outlined'
-        onChangeText={text => setName(text)}
-        style={styles.input}
-        theme={theme}
-        value={name}
-      />
-      <TextInput
-        label="Email"
-        mode='outlined'
-        onChangeText={text => setEmail(text)}
-        style={styles.input}
-        theme={theme}
-        value={email}
-      />
-      <TextInput
-        keyboardType='number-pad'
-        label="Phone"
-        mode='outlined'
-        onChangeText={text => setPhone(text)}
-        style={styles.input}
-        theme={theme}
-        value={phone}
-      />
-      <TextInput
-        keyboardType='number-pad'
-        label="Salary"
-        mode='outlined'
-        onChangeText={text => setSalary(text)}
-        style={styles.input}
-        theme={theme}
-        value={salary}
-      />
-      <TextInput
-        label="Position"
-        mode='outlined'
-        onChangeText={text => setPosition(text)}
-        style={styles.input}
-        theme={theme}
-        value={position}
-      />
-      <Button
-        icon={ picture ? 'check' : 'upload'}
-        mode="contained"
-        onPress={() => setModal(true)}
-        style={styles.button}
-        theme={theme}
-      >
-        Upload image
-      </Button>
-      <Button
-        icon="content-save"
-        mode="contained"
-        onPress={() => submitData()}
-        style={styles.button}
-        theme={theme}
-      >
-        Save
-      </Button>
-      <Modal
-        animationType='slide'
-        transparent={true}
-        visible={modal}
-        onRequestClose={() => setModal(false)}
-      >
-        <View style={styles.modal}>
-          <View style={styles.modalButtons}>
+    <KeyboardAvoidingView
+      behavior='position'
+      style={styles.root}
+      enabled={enableShift}
+    >
+      <View>
+        <TextInput
+          label="Name"
+          mode='outlined'
+          onChangeText={text => setName(text)}
+          onFocus={()=>setEnableShift(false)}
+          style={styles.input}
+          theme={theme}
+          value={name}
+        />
+        <TextInput
+          label="Email"
+          mode='outlined'
+          onChangeText={text => setEmail(text)}
+          onFocus={()=>setEnableShift(false)}
+          style={styles.input}
+          theme={theme}
+          value={email}
+        />
+        <TextInput
+          keyboardType='number-pad'
+          label="Phone"
+          mode='outlined'
+          onChangeText={text => setPhone(text)}
+          onFocus={()=>setEnableShift(false)}
+          style={styles.input}
+          theme={theme}
+          value={phone}
+        />
+        <TextInput
+          keyboardType='number-pad'
+          label="Salary"
+          mode='outlined'
+          onChangeText={text => setSalary(text)}
+          onFocus={()=>setEnableShift(true)}
+          style={styles.input}
+          theme={theme}
+          value={salary}
+        />
+        <TextInput
+          label="Position"
+          mode='outlined'
+          onChangeText={text => setPosition(text)}
+          onFocus={()=>setEnableShift(true)}
+          style={styles.input}
+          theme={theme}
+          value={position}
+        />
+        <Button
+          icon={ picture ? 'check' : 'upload'}
+          mode="contained"
+          onPress={() => setModal(true)}
+          style={styles.button}
+          theme={theme}
+        >
+          Upload image
+        </Button>
+        <Button
+          icon="content-save"
+          mode="contained"
+          onPress={() => submitData()}
+          style={styles.button}
+          theme={theme}
+        >
+          { route.params?._id ? 'Update' : 'Save' }
+        </Button>
+        <Modal
+          animationType='slide'
+          transparent={true}
+          visible={modal}
+          onRequestClose={() => setModal(false)}
+        >
+          <View style={styles.modal}>
+            <View style={styles.modalButtons}>
+              <Button
+                icon='camera'
+                mode="contained"
+                onPress={() => pickFromCamera()}
+                theme={theme}
+              >
+                Camera
+              </Button>
+              <Button
+                icon='image-area'
+                mode="contained"
+                onPress={() => pickFromGallery()}
+                theme={theme}
+              >
+                Gallery
+              </Button>
+            </View>
             <Button
-              icon='camera'
-              mode="contained"
-              onPress={() => pickFromCamera()}
+              onPress={() => setModal(false)}
               theme={theme}
+              style={styles.button}
             >
-              Camera
-            </Button>
-            <Button
-              icon='image-area'
-              mode="contained"
-              onPress={() => pickFromGallery()}
-              theme={theme}
-            >
-              Gallery
+              Cancel
             </Button>
           </View>
-          <Button
-            onPress={() => setModal(false)}
-            theme={theme}
-            style={styles.button}
-          >
-            Cancel
-          </Button>
-        </View>
-      </Modal>
-    </View>
+        </Modal>
+      </View>
+    </KeyboardAvoidingView>
   )
 };
 

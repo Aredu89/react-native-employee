@@ -1,9 +1,10 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image, Linking, Platform } from 'react-native';
+import { Alert, StyleSheet, Text, View, Image, Linking, Platform } from 'react-native';
 import { MaterialIcons, Entypo } from '@expo/vector-icons';
 import { Title, Card, Button } from 'react-native-paper';
+import { uri } from './Consts';
 
-const Profile = ({ route }) => {
+const Profile = ({ route, navigation }) => {
   const {
     _id,
     name,
@@ -13,6 +14,27 @@ const Profile = ({ route }) => {
     salary,
     position
   } = route.params.item;
+
+  const deleteEmployee = () => {
+    fetch(`${uri}/employees`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        id: _id,
+      }),
+    })
+    .then(res=>res.json())
+    .then(data=>{
+      Alert.alert(`Employee ${data.name} deleted`);
+      navigation.navigate('Home');
+    })
+    .catch(error=>{
+      Alert.alert('Error deleting employee')
+    })
+  };
+
   const openDial = () => {
     if (Platform.OS === 'android') {
       Linking.openURL(`tel:${phone}`);
@@ -20,6 +42,7 @@ const Profile = ({ route }) => {
       Linking.openURL(`telprompt:${phone}`);
     }
   };
+
   return(
     <View style={styles.root}>
       <View style={styles.gradientSection} />
@@ -63,7 +86,15 @@ const Profile = ({ route }) => {
         <Button
           icon="account-edit"
           mode="contained"
-          onPress={() => console.log("Save---")}
+          onPress={() => navigation.navigate("Create", {
+            _id,
+            name,
+            picture,
+            email,
+            phone,
+            salary,
+            position
+          })}
           style={styles.button}
           theme={theme}
         >
@@ -72,7 +103,7 @@ const Profile = ({ route }) => {
         <Button
           icon="delete"
           mode="contained"
-          onPress={() => console.log("Save---")}
+          onPress={() => deleteEmployee()}
           style={styles.button}
           theme={theme}
         >

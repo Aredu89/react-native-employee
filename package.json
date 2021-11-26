@@ -3,7 +3,7 @@
   "scripts": {
     "start": "expo start",
     "start-server": "nodemon ./server/app.js",
-    "public-url": "lt --port 3000",
+    "public-url": "lt --port 3003",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
